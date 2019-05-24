@@ -1,0 +1,32 @@
+language: go
+sudo: false
+matrix:
+  include:
+  - go: 1.x
+    env: LATEST=true
+  - go: 1.10.x
+  - go: 1.11.x
+script:
+- go vet
+- go test -v ./...
+- if [ "${LATEST}" = "true" ]; then GOOS=linux GOARCH=amd64 go build -ldflags "-X
+  main.Version=`git rev-parse --short HEAD`" -o terraform-provider-goterra.linux.amd64;
+  fi
+- if [ "${LATEST}" = "true" ]; then GOOS=darwin GOARCH=amd64 go build -ldflags "-X
+  main.Version=`git rev-parse --short HEAD`" -o terraform-provider-goterra.darwin.amd64;
+  fi
+- if [ "${LATEST}" = "true" ]; then GOOS=windows GOARCH=amd64 go build -ldflags "-X
+  main.Version=`git rev-parse --short HEAD`" -o terraform-provider-goterra.windows.amd64.exe;
+  fi
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: kMcnTx7d/J3gxkIRWmaKjFjZN6x7Js01burbvT1eT1aAvaOQEd2seawIEzCNgQ2ETDTuiMD7eo6omPg/HQzbPfgAHv77zmvgl6EeVKRU6QGWFfQ+3Sjz0e1C14+5e67ln3i71LZ4B/LQfZ27IqJZpCLz6Cg2rHDft/VQH6D+f/DfRHxKrRDEcyXZw0BcElBjuP3wAceTuRNyue1VmiIlSyA04UWqSt7P3WUQ31j9YinBh6h9axhsvG9EfefKn9pzc8Y42p3XeFdhHQM1UT5MsC4+n5GvhMs6yZR+8SXNDou8+ARzIVckXYQmw40VP4S20TVhJXqtC6dI4/ZbN8TVMAEVGue/cEIpNrVtwiBrhzksAjWtZAuLdF6PS411NdKg9sfECnxnDlqjXb7Kuq82T8wdSUVeoo/7qvUWjNvW8SYUHfSpyTConEQECbpOozg+MqiX4Wjw/mTyblqCqkTKs3ZtmnUk8Cl8O8/Zn2u77MQLRCD86oe5hBl4lxak/P19y7k9O8e5JbAyzO9pdAIeNwamUKZOPiyLeW1sga7/uzE5GycvjFI5YND4MW+rjl14uPihKli5VPDVCxZKU9Eii8Y1FteJnEGL/UzEJwAzXA0+IUk3KUPrgjmMNDn8ZoWlGVd72vOO8/N/ZZb6erViiWGNYbCJVSp9XL46p0+X68s=
+  file:
+          - terraform-provider-goterra.linux.amd64
+          - terraform-provider-goterra.darwin.amd64
+          - terraform-provider-goterra.windows.amd64.exe
+  on:
+    repo: osallou/terraform-provider-goterra
+    tags: true
