@@ -1,6 +1,16 @@
 resource "goterra_deployment" "my-deploy" {
-    address = "https://test.genouest.org"
-    apikey = "123"
+    address = "http://localhost:8000"
+    apikey = "5FBBD6P84OE7UT4QRTTE"
+}
+
+resource "goterra_push" "key1" {
+  address = "${goterra_deployment.my-deploy.address}"
+  token = "${goterra_deployment.my-deploy.token}"
+  deployment = "${goterra_deployment.my-deploy.id}"
+  key = "key1"
+  value = "value1"
+
+  depends_on = ["goterra_deployment.my-deploy"]
 }
 
 data "goterra_deployment" "toto" {

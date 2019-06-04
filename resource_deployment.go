@@ -82,7 +82,7 @@ type Deployment struct {
 
 func createDeployment(options Options) *Deployment {
 	client := &http.Client{}
-	remote := []string{options.url, "deployment"}
+	remote := []string{options.url, "store"}
 	byteData := make([]byte, 0)
 	req, _ := http.NewRequest("POST", strings.Join(remote, "/"), bytes.NewReader(byteData))
 	req.Header.Add("X-API-Key", options.token)
@@ -105,7 +105,7 @@ func createDeployment(options Options) *Deployment {
 
 func deleteDeployment(options Options) bool {
 	client := &http.Client{}
-	remote := []string{options.url, "deployment", options.deployment}
+	remote := []string{options.url, "store", options.deployment}
 	byteData := make([]byte, 0)
 	req, _ := http.NewRequest("DELETE", strings.Join(remote, "/"), bytes.NewReader(byteData))
 	req.Header.Add("Content-Type", "application/json")

@@ -47,7 +47,7 @@ type KeyValue struct {
 
 func dataSourceDeploymentRead(d *schema.ResourceData, meta interface{}) error {
 	client := &http.Client{}
-	remote := []string{d.Get("address").(string), "deployment", d.Get("deployment").(string), d.Get("key").(string)}
+	remote := []string{d.Get("address").(string), "store", d.Get("deployment").(string), d.Get("key").(string)}
 	req, _ := http.NewRequest("GET", strings.Join(remote, "/"), nil)
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", d.Get("token").(string)))
