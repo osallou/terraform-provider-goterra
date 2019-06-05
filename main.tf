@@ -13,6 +13,19 @@ resource "goterra_push" "key1" {
   depends_on = ["goterra_deployment.my-deploy"]
 }
 
+resource "goterra_application" "app1" {
+  address = "http://localhost:8002"
+  apikey = "${goterra_deployment.my-deploy.apikey}"
+  deployment = "${goterra_deployment.my-deploy.id}"
+  deployment_token = "${goterra_deployment.my-deploy.token}"
+  deployment_address = "${goterra_deployment.my-deploy.address}"
+
+  namespace = "5cf51c96f01f06317bdb3d51"
+  application = "5cf78f2183a8fb8c505c524a"
+
+  depends_on = ["goterra_deployment.my-deploy"]
+}
+
 data "goterra_deployment" "toto" {
     address = "${goterra_deployment.my-deploy.address}"
     deployment = "${goterra_deployment.my-deploy.id}"

@@ -8,8 +8,9 @@ import (
 func Provider() *schema.Provider {
 	return &schema.Provider{
 		ResourcesMap: map[string]*schema.Resource{
-			"goterra_deployment": resourceDeployment(),
-			"goterra_push":       resourcePush(),
+			"goterra_deployment":  resourceDeployment(),
+			"goterra_push":        resourcePush(),
+			"goterra_application": resourceApplication(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"goterra_deployment": dataSourceDeployment(),
