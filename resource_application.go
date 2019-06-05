@@ -218,6 +218,11 @@ func createApp(options ApplicationOptions) (string, error) {
 		}
 
 		for i := len(scripts) - 1; i >= 0; i-- {
+			scripts[i] = strings.Replace(scripts[i], "${GOT_ID}", options.application, -1)
+			scripts[i] = strings.Replace(scripts[i], "${GOT_URL}", options.deploymentAddress, -1)
+			scripts[i] = strings.Replace(scripts[i], "${GOT_TOKEN}", options.deploymentToken, -1)
+			scripts[i] = strings.Replace(scripts[i], "${GOT_DEP}", options.deployment, -1)
+
 			errRecipe := addRecipe(options, i, scripts[i])
 			if errRecipe != nil {
 				return "", errRecipe
@@ -245,8 +250,6 @@ func createApp(options ApplicationOptions) (string, error) {
 	if errFile != nil {
 		return "", fmt.Errorf("[ERROR] failed to write cloudinit file")
 	}
-	// Write goterra.sh
-
 	return cloudinit, nil
 }
 
