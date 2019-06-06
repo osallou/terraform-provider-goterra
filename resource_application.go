@@ -36,9 +36,16 @@ if [ -n "$(command -v apt)" ]; then
     apt-get update && apt-get install -y  curl
 fi
 
+get_latest_release() {
+	curl --silent "https://api.github.com/repos/osallou/goterra/releases/latest" |
+	  grep '"tag_name":' |
+	  sed -E 's/.*"([^"]+)".*/\1/'
+}
+cliversion=` + "`get_latest_release`" + `
+
 echo "[INFO] initialization"
 mkdir -p /opt/got
-curl -L -o /opt/got/goterra-cli https://github.com/osallou/goterra/releases/download/0.0.3/goterra-cli.linux.amd64
+curl -L -o /opt/got/goterra-cli https://github.com/osallou/goterra/releases/download/$cliversion/goterra-cli.linux.amd64
 chmod +x /opt/got/goterra-cli
 
 /opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token ${GOT_TOKEN} put status start
