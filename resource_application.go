@@ -187,7 +187,14 @@ func createApp(options ApplicationOptions) (string, error) {
 	jr, _ := json.Marshal(respAppInfo)
 	log.Printf("[INFO] app = %s", jr)
 
-	scriptTxt := goterraTmplPre
+	scriptTxt := goterraTmplPre + "\n"
+
+	for varName, varValue := range respAppInfo.App.Inputs {
+		if strings.HasPrefix(varName, "env_") {
+			exportName := strings.Replace(varName, "env_", "", 1)
+			scriptTxt += fmt.Sprintf("export %s=%q\n", exportName, varValue)
+		}
+	}
 
 	for _, appRecipe := range respAppInfo.App.Recipes {
 		recipe, err := getRecipe(options, appRecipe)
