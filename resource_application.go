@@ -19,11 +19,16 @@ set -e
 
 ON_ERROR () {
 	trap ERR
+	if [ -e /opt/got/got.log ]; then
+		/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token ${GOT_TOKEN} put _log @/opt/got/got.log
+	fi
 	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token ${GOT_TOKEN} put status failed
 	exit 1
 }
 
 trap ON_ERROR ERR
+
+export GOT_TRIM=1000000
 
 echo "Set up goterra"
 
@@ -54,6 +59,10 @@ const goterraTmpPost string = `
 echo "[TODO] send log with put log @/opt/got/got.log"
 echo "[INFO] setup is over"
 /opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token ${GOT_TOKEN} put status over
+if [ -e /opt/got/got.log ]; then
+	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token ${GOT_TOKEN} put _log @/opt/got/got.log
+fi
+
 `
 
 func resourceApplication() *schema.Resource {
