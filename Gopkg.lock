@@ -14,8 +14,8 @@
     "storage",
   ]
   pruneopts = "UT"
-  revision = "775730d6e48254a2430366162cf6298e5368833c"
-  version = "v0.39.0"
+  revision = "457ea5c15ccf3b87db582c450e80101989da35f7"
+  version = "v0.40.0"
 
 [[projects]]
   digest = "1:90afd0cfdffcc3df7855160ee2954cbca286e23c4eb9cb3d075536c9e4e1b04f"
@@ -50,7 +50,7 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:61fb39ddc160eb9acac07eb5eeed7a0524d23224cbf37ad82321d34db4e78a70"
+  digest = "1:75ff23c02878c12d796ec3fa6fc0511907b1c67721e81b13517c28bab0628e51"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -90,8 +90,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "742c1495174cefd893992396b014bd6b7c91a293"
-  version = "v1.19.42"
+  revision = "bdafd99f31a0103ec73bcabfc9498aef3252d515"
+  version = "v1.19.47"
 
 [[projects]]
   branch = "master"
@@ -282,7 +282,7 @@
     "hclwrite",
   ]
   pruneopts = "UT"
-  revision = "4b22149b7cef7272799ac85dca150e553d667971"
+  revision = "318e80eefe28c3aa01b434c61bcf4c83a0cc6b25"
 
 [[projects]]
   branch = "master"
@@ -298,7 +298,7 @@
   revision = "97b3a9cdfa9349086cfad7ea2fe3165bfe3cbf63"
 
 [[projects]]
-  digest = "1:533bf5f9daa5dbb354029ccf22d28e71d1fb9dd87120457acbfbda62f17fb52e"
+  digest = "1:f4633ab2ff5435ebf4f7affc4a6ee831901850a3c3eb5c876e99894f8f75b3ef"
   name = "github.com/hashicorp/terraform"
   packages = [
     "addrs",
@@ -340,8 +340,8 @@
     "version",
   ]
   pruneopts = "UT"
-  revision = "08918475dd08f0c45fc5aa084bacd2595c6e6c07"
-  version = "v0.12.0"
+  revision = "12c3170748efe30a36bb2e937c02c2f2a600e120"
+  version = "v0.12.1"
 
 [[projects]]
   branch = "master"
@@ -495,7 +495,6 @@
   version = "v4.0.4"
 
 [[projects]]
-  branch = "master"
   digest = "1:08d3d8652ad0bf291ac3bdc05b59595ee0ec4211364ffe88528edef01dca630f"
   name = "github.com/zclconf/go-cty"
   packages = [
@@ -509,15 +508,16 @@
     "cty/set",
   ]
   pruneopts = "UT"
-  revision = "4fecf87372ec204b46eb9e8ff264cdc3cafdccfe"
+  revision = "6fd39ad70c3a6bbdb1b4e47444e4cce72f901200"
+  version = "v1.0.0"
 
 [[projects]]
   digest = "1:1cabe44fb226a08664539c7ff79f25940284d9e2116187a74c90472a51c257ca"
   name = "go.mongodb.org/mongo-driver"
   packages = ["bson/primitive"]
   pruneopts = "UT"
-  revision = "be02c9f9ce6b45d6e845492277a232afd6956cc3"
-  version = "v1.0.2"
+  revision = "582ff343271e8893d785ff094855498c285bce0a"
+  version = "v1.0.3"
 
 [[projects]]
   digest = "1:74055050ea547bb04600be79cc501965cb3de8988018262f2ca430f0a0b48ec3"
@@ -560,11 +560,11 @@
     "openpgp/s2k",
   ]
   pruneopts = "UT"
-  revision = "20be4c3c3ed52bfccdb2d59a412ee1a936d175a7"
+  revision = "f99c8df09eb5bff426315721bfa5f16a99cad32c"
 
 [[projects]]
   branch = "master"
-  digest = "1:1b13e8770142a9251361b13a3b8b9b77296be6fa32856c937b346a45f93c845c"
+  digest = "1:2f357867bf425774d35beca5be718402a4488b8b23b1563ce8c5bb91d09285a7"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -577,7 +577,7 @@
     "trace",
   ]
   pruneopts = "UT"
-  revision = "60506f45cf65977eb3a9c6e30f995f54a721c271"
+  revision = "3f473d35a33aa6fdd203e306dc439b797820e3f1"
 
 [[projects]]
   branch = "master"
@@ -595,11 +595,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:8f5108406bc43c7669b0d67d282e40d05c9f268615fcaf8c1f0f76965aa3f09f"
+  digest = "1:010311506e3917b54487c35a4277e2709678a40c1587d82492c40b78b6a0a01d"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "4c4f7f33c9ed00de01c4c741d2177abfcfe19307"
+  revision = "93c9922d18aeb82498a065f07aec7ad7fa60dfb7"
 
 [[projects]]
   digest = "1:8d8faad6b12a3a4c819a3f9618cb6ee1fa1cfc33253abeeea8b55336721e3405"
@@ -642,11 +642,11 @@
     "transport/http/internal/propagation",
   ]
   pruneopts = "UT"
-  revision = "721295fe20d585ce7e948146f82188429d14da33"
-  version = "v0.5.0"
+  revision = "aac82e61c0c8fe133c297b4b59316b9f481e1f0a"
+  version = "v0.6.0"
 
 [[projects]]
-  digest = "1:682eceac662719c843bab910f932a9db9526980b911f48dd213867c653b9e511"
+  digest = "1:aab5961ce178ac5006b1c2d52214a0d22a49589eb986d6769e1c93e95301f0d4"
   name = "google.golang.org/appengine"
   packages = [
     ".",
@@ -664,8 +664,8 @@
     "urlfetch",
   ]
   pruneopts = "UT"
-  revision = "4c25cacc810c02874000e4f7071286a8e96b2515"
-  version = "v1.6.0"
+  revision = "b2f4a3cf3c67576a2ee09e1fe62656a5086ce880"
+  version = "v1.6.1"
 
 [[projects]]
   branch = "master"
@@ -679,10 +679,10 @@
     "googleapis/type/expr",
   ]
   pruneopts = "UT"
-  revision = "fb225487d10142b5bcc35abfc6cb9a0609614976"
+  revision = "eb0b1bdb6ae60fcfc41b8d907b50dfb346112301"
 
 [[projects]]
-  digest = "1:64657a7d01c4377b9456d8eaf6ad31b244e3a09a9d8d5a321eb0b1d4bd16a46c"
+  digest = "1:7216432f8ed911d5f54bd9b59c7f5162fd7f5b46e5da250666b78897d776a7a8"
   name = "google.golang.org/grpc"
   packages = [
     ".",
@@ -721,8 +721,8 @@
     "tap",
   ]
   pruneopts = "UT"
-  revision = "869adfc8d5a43efc0d05780ad109106f457f51e4"
-  version = "v1.21.0"
+  revision = "501c41df7f472c740d0674ff27122f3f48c80ce7"
+  version = "v1.21.1"
 
 [solve-meta]
   analyzer-name = "dep"

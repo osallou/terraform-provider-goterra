@@ -42,6 +42,9 @@ func resourceServerCreate(d *schema.ResourceData, m interface{}) error {
 	options.url = address
 	options.token = d.Get("apikey").(string)
 	deployment := createDeployment(options)
+	if deployment == nil {
+		return fmt.Errorf("Failed to create deployment")
+	}
 	d.SetId(deployment.ID)
 	d.Set("token", deployment.Token)
 	log.Printf("[INFO] Created a goterra deployment: %s\n", deployment.ID)
