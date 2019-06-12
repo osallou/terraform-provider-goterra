@@ -22,7 +22,7 @@ export TOKEN="${GOT_TOKEN}"
 ON_ERROR () {
 	trap ERR
 	if [ -e /opt/got/got.log ]; then
-		/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put _log @/opt/got/got.log
+		/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put _log @/opt/got/${GOT_ID}.log
 	fi
 	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put status failed
 	exit 1
@@ -35,12 +35,18 @@ export GOT_TRIM=1000000
 echo "Set up goterra"
 
 if [ -n "$(command -v yum)" ]; then
-    yum -y install curl
+    yum -y install curl dos2unix
 fi
 
 if [ -n "$(command -v apt)" ]; then
-    export DEBIAN_NONINTERACTIVE=1
-    apt-get update && apt-get install -y  curl
+	export DEBIAN_NONINTERACTIVE=1
+	systemctl stop apt-daily.timer
+	systemctl disable apt-daily.timer
+	systemctl mask apt-daily.service
+	systemctl daemon-reload
+	apt-get purge -y unattended-upgrades
+	time (while ps -opid= -C apt-get > /dev/null; do sleep 1; done); echo "Waiting for apt unlock"
+    apt-get update && apt-get install -y  curl dos2unix
 fi
 
 get_latest_release() {
@@ -62,7 +68,7 @@ echo "[TODO] send log with put log @/opt/got/got.log"
 echo "[INFO] setup is over"
 /opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put status over
 if [ -e /opt/got/got.log ]; then
-	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put _log @/opt/got/got.log
+	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put _log @/opt/got/${GOT_ID}.log
 fi
 
 `
@@ -254,6 +260,7 @@ func createApp(options ApplicationOptions) (string, error) {
 			}
 			recipeIndex := "_recipe" + fmt.Sprintf("%s_%d", options.application, i)
 			scriptTxt += "\n" + "/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN get " + recipeIndex + " > /opt/got/" + recipeIndex + ".sh\n"
+			scriptTxt += "dos2unix /opt/got/" + recipeIndex + ".sh\n"
 			scriptTxt += "chmod +x /opt/got/" + recipeIndex + ".sh\n"
 			scriptTxt += "/opt/got/" + recipeIndex + ".sh &>> /opt/got/${GOT_ID}.log"
 		}
