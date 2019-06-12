@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -22,6 +23,11 @@ func dataSourceDeployment() *schema.Resource {
 			"address": {
 				Type:     schema.TypeString,
 				Required: true,
+			},
+			"timeout": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				Default:  30,
 			},
 			"deployment": {
 				Type:     schema.TypeString,
@@ -48,24 +54,39 @@ type KeyValue struct {
 func dataSourceDeploymentRead(d *schema.ResourceData, meta interface{}) error {
 	client := &http.Client{}
 	remote := []string{d.Get("address").(string), "store", d.Get("deployment").(string), d.Get("key").(string)}
-	req, _ := http.NewRequest("GET", strings.Join(remote, "/"), nil)
-	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", d.Get("token").(string)))
-	resp, err := client.Do(req)
-	if err != nil {
-		return fmt.Errorf("failed to contact server %s", d.Get("address"))
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != 200 {
-		log.Printf("[INFO] failed to get deployment key\n")
-		d.Set("data", "NotFound")
+	fmt.Printf("??? %+v", remote)
+	limit := time.Now().Add(time.Duration(d.Get("timeout").(int)) * time.Second)
+	current := time.Now()
+	for !current.After(limit) {
+		current = time.Now()
+		req, _ := http.NewRequest("GET", strings.Join(remote, "/"), nil)
+		req.Header.Add("Content-Type", "application/json")
+		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", d.Get("token").(string)))
+		resp, err := client.Do(req)
+		if err != nil {
+			return fmt.Errorf("failed to contact server %s, %s", d.Get("address"), err)
+		}
+		defer resp.Body.Close()
+		if resp.StatusCode == 403 {
+			log.Printf("[INFO] failed to get key, unauthorized\n")
+			return fmt.Errorf("failed to get key, unauthorized")
+		}
+		if resp.StatusCode != 200 {
+			log.Printf("[INFO] failed to get key %s, waiting\n", d.Get("key").(string))
+			time.Sleep(1 * time.Second)
+			//d.Set("data", "NotFound")
+			//d.SetId(d.Get("key").(string))
+			//return nil
+			continue
+		}
+		respData := &KeyValue{}
+		json.NewDecoder(resp.Body).Decode(respData)
+		log.Printf("[DEBUG] deployment %+v", respData)
 		d.SetId(d.Get("key").(string))
+		d.Set("data", respData.Value)
 		return nil
 	}
-	respData := &KeyValue{}
-	json.NewDecoder(resp.Body).Decode(respData)
-	log.Printf("[DEBUG] deployment %+v", respData)
-	d.Set("data", respData.Value)
 	d.SetId(d.Get("key").(string))
+	d.Set("data", "NotFound")
 	return nil
 }
