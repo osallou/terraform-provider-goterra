@@ -47,7 +47,7 @@ func resourceServerCreate(d *schema.ResourceData, m interface{}) error {
 	}
 	d.SetId(deployment.ID)
 	d.Set("token", deployment.Token)
-	log.Printf("[INFO] Created a goterra deployment: %s\n", deployment.ID)
+	log.Printf("[INFO] Created a goterra deployment: %+v\n", deployment)
 	return resourceServerRead(d, m)
 }
 

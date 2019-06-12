@@ -17,12 +17,14 @@ import (
 const goterraTmplPre string = `#!/bin/bash
 set -e
 
+export TOKEN="${GOT_TOKEN}"
+
 ON_ERROR () {
 	trap ERR
 	if [ -e /opt/got/got.log ]; then
-		/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token ${GOT_TOKEN} put _log @/opt/got/got.log
+		/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put _log @/opt/got/got.log
 	fi
-	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token ${GOT_TOKEN} put status failed
+	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put status failed
 	exit 1
 }
 
@@ -53,14 +55,14 @@ mkdir -p /opt/got
 curl -L -o /opt/got/goterra-cli https://github.com/osallou/goterra-store/releases/download/$cliversion/goterra-cli.linux.amd64
 chmod +x /opt/got/goterra-cli
 
-/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token ${GOT_TOKEN} put status start
+/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put status start
 `
 const goterraTmpPost string = `
 echo "[TODO] send log with put log @/opt/got/got.log"
 echo "[INFO] setup is over"
-/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token ${GOT_TOKEN} put status over
+/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put status over
 if [ -e /opt/got/got.log ]; then
-	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token ${GOT_TOKEN} put _log @/opt/got/got.log
+	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put _log @/opt/got/got.log
 fi
 
 `
@@ -251,7 +253,7 @@ func createApp(options ApplicationOptions) (string, error) {
 				return "", errRecipe
 			}
 			recipeIndex := "_recipe" + fmt.Sprintf("%s_%d", options.application, i)
-			scriptTxt += "\n" + "/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token ${GOT_TOKEN} get " + recipeIndex + " > /opt/got/" + recipeIndex + ".sh\n"
+			scriptTxt += "\n" + "/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN get " + recipeIndex + " > /opt/got/" + recipeIndex + ".sh\n"
 			scriptTxt += "chmod +x /opt/got/" + recipeIndex + ".sh\n"
 			scriptTxt += "/opt/got/" + recipeIndex + ".sh &>> /opt/got/${GOT_ID}.log"
 		}
