@@ -119,16 +119,26 @@ func resourceApplication() *schema.Resource {
 
 func resourceApplicationCreate(d *schema.ResourceData, m interface{}) error {
 	address := d.Get("address").(string)
+	apikey := d.Get("apikey").(string)
+
 	options := ApplicationOptions{}
-	options.url = address
-	options.apikey = d.Get("apikey").(string)
+
+	options.url = m.(ProviderConfig).Address
+	options.apikey = m.(ProviderConfig).APIKey
+	if address != "" {
+		options.url = address
+	}
+	if apikey != "" {
+		options.apikey = apikey
+	}
+
 	options.deployment = d.Get("deployment").(string)
 	options.application = d.Get("application").(string)
 	options.namespace = d.Get("namespace").(string)
 	options.deploymentToken = d.Get("deployment_token").(string)
 	options.deploymentAddress = d.Get("deployment_address").(string)
 	if options.deploymentAddress == "" {
-		options.deploymentAddress = address
+		options.deploymentAddress = options.url
 	}
 	cloudinit, err := createApp(options)
 	if err != nil {

@@ -46,7 +46,10 @@ func resourcePush() *schema.Resource {
 func resourcePushCreate(d *schema.ResourceData, m interface{}) error {
 	address := d.Get("address").(string)
 	options := PushOptions{}
-	options.url = address
+	options.url = m.(ProviderConfig).Address
+	if address != "" {
+		options.url = address
+	}
 	options.deployment = d.Get("deployment").(string)
 	options.token = d.Get("token").(string)
 	options.key = d.Get("key").(string)

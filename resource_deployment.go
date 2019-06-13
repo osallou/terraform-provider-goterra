@@ -21,7 +21,7 @@ func resourceDeployment() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"address": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"apikey": &schema.Schema{
 				Type:     schema.TypeString,
@@ -38,9 +38,16 @@ func resourceDeployment() *schema.Resource {
 
 func resourceServerCreate(d *schema.ResourceData, m interface{}) error {
 	address := d.Get("address").(string)
+	apikey := d.Get("apikey").(string)
 	options := Options{}
-	options.url = address
-	options.token = d.Get("apikey").(string)
+	options.url = m.(ProviderConfig).Address
+	options.token = m.(ProviderConfig).APIKey
+	if address != "" {
+		options.url = address
+	}
+	if apikey != "" {
+		options.token = apikey
+	}
 	deployment := createDeployment(options)
 	if deployment == nil {
 		return fmt.Errorf("Failed to create deployment")
@@ -62,9 +69,12 @@ func resourceServerUpdate(d *schema.ResourceData, m interface{}) error {
 func resourceServerDelete(d *schema.ResourceData, m interface{}) error {
 	address := d.Get("address").(string)
 	options := Options{}
-	options.url = address
 	options.deployment = d.Id()
 	options.token = d.Get("token").(string)
+	options.url = m.(ProviderConfig).Address
+	if address != "" {
+		options.url = address
+	}
 	deleteDeployment(options)
 	return nil
 }

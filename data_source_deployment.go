@@ -53,8 +53,13 @@ type KeyValue struct {
 
 func dataSourceDeploymentRead(d *schema.ResourceData, meta interface{}) error {
 	client := &http.Client{}
-	remote := []string{d.Get("address").(string), "store", d.Get("deployment").(string), d.Get("key").(string)}
-	fmt.Printf("??? %+v", remote)
+
+	address := meta.(ProviderConfig).Address
+	if d.Get("address").(string) != "" {
+		address = d.Get("address").(string)
+	}
+
+	remote := []string{address, "store", d.Get("deployment").(string), d.Get("key").(string)}
 	limit := time.Now().Add(time.Duration(d.Get("timeout").(int)) * time.Second)
 	current := time.Now()
 	for !current.After(limit) {
