@@ -40,11 +40,11 @@ fi
 
 if [ -n "$(command -v apt)" ]; then
 	export DEBIAN_NONINTERACTIVE=1
-	systemctl stop apt-daily.timer
-	systemctl disable apt-daily.timer
-	systemctl mask apt-daily.service
+	systemctl stop apt-daily.timer || true
+	systemctl disable apt-daily.timer || true
+	systemctl mask apt-daily.service || true
 	systemctl daemon-reload
-	apt-get purge -y unattended-upgrades
+	apt-get purge -y unattended-upgrades || true
 	time (while ps -opid= -C apt-get > /dev/null; do sleep 1; done); echo "Waiting for apt unlock"
     apt-get update && apt-get install -y  curl dos2unix
 fi
@@ -226,6 +226,8 @@ func createApp(options ApplicationOptions) (string, error) {
 			log.Printf("[ERROR] Failed to get recipe")
 			return "", fmt.Errorf("[ERROR] failed to get recipe")
 		}
+		scriptTxt += fmt.Sprintf("\n#*** Apply recipe %s **********\n", recipe.Name)
+
 		if _, ok := loadedScripts[recipe.Name]; ok {
 			// Already loaded
 		} else {
@@ -244,6 +246,7 @@ func createApp(options ApplicationOptions) (string, error) {
 				} else {
 					loadedScripts[parentRecipe.Name] = true
 					scripts = append(scripts, parentRecipe.Script)
+					scriptTxt += fmt.Sprintf("\n#*** Load recipe %s:%s **********\n", parentRecipe.Name, parentRecipe.ID.Hex())
 				}
 			}
 		}
@@ -264,6 +267,8 @@ func createApp(options ApplicationOptions) (string, error) {
 			scriptTxt += "chmod +x /opt/got/" + recipeIndex + ".sh\n"
 			scriptTxt += "/opt/got/" + recipeIndex + ".sh &>> /opt/got/${GOT_ID}.log"
 		}
+
+		scriptTxt += "\n#****************************\n"
 
 		scripts = make([]string, 0)
 
