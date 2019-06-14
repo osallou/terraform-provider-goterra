@@ -21,7 +21,7 @@ func resourcePush() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"address": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"token": &schema.Schema{
 				Type:     schema.TypeString,

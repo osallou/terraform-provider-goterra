@@ -22,7 +22,7 @@ func dataSourceDeployment() *schema.Resource {
 			},
 			"address": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"timeout": {
 				Type:     schema.TypeInt,

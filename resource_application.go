@@ -87,11 +87,11 @@ func resourceApplication() *schema.Resource {
 			},
 			"address": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"apikey": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"recipe_tag": &schema.Schema{
 				Type:     schema.TypeString,
