@@ -93,6 +93,10 @@ func resourceApplication() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"recipe_tag": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 			"deployment": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
@@ -127,6 +131,7 @@ func resourceApplicationCreate(d *schema.ResourceData, m interface{}) error {
 
 	options := ApplicationOptions{}
 	options.name = d.Get("name").(string)
+	options.recipeTag = d.Get("recipe_tag").(string)
 	options.url = m.(ProviderConfig).Address
 	options.apikey = m.(ProviderConfig).APIKey
 	if address != "" {
@@ -148,7 +153,12 @@ func resourceApplicationCreate(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	}
-	d.SetId(fmt.Sprintf("%s-%s", options.deployment, options.application))
+
+	id := fmt.Sprintf("%s-%s", options.deployment, options.application)
+	if options.name != "" {
+		id = fmt.Sprintf("%s-%s", id, options.name)
+	}
+	d.SetId(id)
 	d.Set("cloudinit", cloudinit)
 	if cloudinit == "" {
 		log.Printf("[ERROR] failed to create cloudinit")
@@ -241,6 +251,18 @@ func createApp(options ApplicationOptions) (string, error) {
 
 	for _, appRecipe := range respAppInfo.App.Recipes {
 		recipe, err := getRecipe(options, appRecipe)
+		if options.recipeTag != "" {
+			tagMatch := false
+			for _, tag := range recipe.Tags {
+				if tag == options.recipeTag {
+					tagMatch = true
+					break
+				}
+			}
+			if !tagMatch {
+				continue
+			}
+		}
 		if err != nil {
 			log.Printf("[ERROR] Failed to get recipe")
 			return "", fmt.Errorf("[ERROR] failed to get recipe")
@@ -297,6 +319,9 @@ func createApp(options ApplicationOptions) (string, error) {
 	scriptTxt = scriptTxt + "\n" + goterraTmpPost
 	// write cloudinit file
 	cloudinit = options.application + ".sh"
+	if options.name != "" {
+		cloudinit = fmt.Sprintf("%s-%s.sh", options.application, options.name)
+	}
 
 	scriptTxt = strings.Replace(scriptTxt, "${GOT_ID}", options.application, -1)
 	scriptTxt = strings.Replace(scriptTxt, "${GOT_URL}", options.deploymentAddress, -1)
@@ -402,6 +427,10 @@ type Recipe struct {
 	Namespace    string             `json:"namespace"`
 	BaseImage    string             `json:"base"`
 	ParentRecipe string             `json:"parent"`
+	Timestamp    int64              `json:"ts"`
+	Previous     string             `json:"prev"`   // Previous recipe id, for versioning
+	Inputs       map[string]string  `json:"inputs"` // List of input variables needed when executing at app for this recipe, those variables should be sent as env_XX if XX is in requires: varname,label
+	Tags         []string           `json:"tags"`
 }
 
 type RespApplication struct {
@@ -431,4 +460,5 @@ type ApplicationOptions struct {
 	namespace         string
 	token             string
 	name              string
+	recipeTag         string
 }
