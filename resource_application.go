@@ -22,9 +22,9 @@ export TOKEN="${GOT_TOKEN}"
 ON_ERROR () {
 	trap ERR
 	if [ -e /opt/got/got.log ]; then
-		/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put _log @/opt/got/${GOT_ID}.log
+		/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put _log_app_${GOT_NAME}_${HOSTNAME} @/opt/got/${GOT_ID}.log
 	fi
-	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put status failed
+	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put status_app_${GOT_NAME}_${HOSTNAME} failed
 	exit 1
 }
 
@@ -61,14 +61,14 @@ mkdir -p /opt/got
 curl -L -o /opt/got/goterra-cli https://github.com/osallou/goterra-store/releases/download/$cliversion/goterra-cli.linux.amd64
 chmod +x /opt/got/goterra-cli
 
-/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put status start
+/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put status_app_${GOT_NAME}_${HOSTNAME} start
 `
 const goterraTmpPost string = `
 echo "[TODO] send log with put log @/opt/got/got.log"
 echo "[INFO] setup is over"
-/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put status over
+/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put status_app_${GOT_NAME}_${HOSTNAME} over
 if [ -e /opt/got/got.log ]; then
-	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put _log @/opt/got/${GOT_ID}.log
+	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put _log_app_${GOT_NAME}_${HOSTNAME} @/opt/got/${GOT_ID}.log
 fi
 
 `
@@ -81,6 +81,10 @@ func resourceApplication() *schema.Resource {
 		Delete: resourceApplicationDelete,
 
 		Schema: map[string]*schema.Schema{
+			"name": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 			"address": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
@@ -122,7 +126,7 @@ func resourceApplicationCreate(d *schema.ResourceData, m interface{}) error {
 	apikey := d.Get("apikey").(string)
 
 	options := ApplicationOptions{}
-
+	options.name = d.Get("name").(string)
 	options.url = m.(ProviderConfig).Address
 	options.apikey = m.(ProviderConfig).APIKey
 	if address != "" {
@@ -230,6 +234,11 @@ func createApp(options ApplicationOptions) (string, error) {
 		}
 	}
 
+	gotName := respAppInfo.App.Name
+	if options.name != "" {
+		gotName = options.name
+	}
+
 	for _, appRecipe := range respAppInfo.App.Recipes {
 		recipe, err := getRecipe(options, appRecipe)
 		if err != nil {
@@ -266,6 +275,7 @@ func createApp(options ApplicationOptions) (string, error) {
 			scripts[i] = strings.Replace(scripts[i], "${GOT_URL}", options.deploymentAddress, -1)
 			scripts[i] = strings.Replace(scripts[i], "${GOT_TOKEN}", options.deploymentToken, -1)
 			scripts[i] = strings.Replace(scripts[i], "${GOT_DEP}", options.deployment, -1)
+			scripts[i] = strings.Replace(scripts[i], "${GOT_NAME}", gotName, -1)
 
 			errRecipe := addRecipe(options, i, scripts[i])
 			if errRecipe != nil {
@@ -292,6 +302,7 @@ func createApp(options ApplicationOptions) (string, error) {
 	scriptTxt = strings.Replace(scriptTxt, "${GOT_URL}", options.deploymentAddress, -1)
 	scriptTxt = strings.Replace(scriptTxt, "${GOT_TOKEN}", options.deploymentToken, -1)
 	scriptTxt = strings.Replace(scriptTxt, "${GOT_DEP}", options.deployment, -1)
+	scriptTxt = strings.Replace(scriptTxt, "${GOT_NAME}", gotName, -1)
 
 	errFile := ioutil.WriteFile(cloudinit, []byte(scriptTxt), 0644)
 	if errFile != nil {
@@ -419,4 +430,5 @@ type ApplicationOptions struct {
 	application       string
 	namespace         string
 	token             string
+	name              string
 }
