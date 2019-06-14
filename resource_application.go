@@ -253,10 +253,14 @@ func createApp(options ApplicationOptions) (string, error) {
 		recipe, err := getRecipe(options, appRecipe)
 		if options.recipeTag != "" {
 			tagMatch := false
-			for _, tag := range recipe.Tags {
-				if tag == options.recipeTag {
-					tagMatch = true
-					break
+			if len(recipe.Tags) == 0 {
+				tagMatch = true
+			} else {
+				for _, tag := range recipe.Tags {
+					if tag == options.recipeTag {
+						tagMatch = true
+						break
+					}
 				}
 			}
 			if !tagMatch {
