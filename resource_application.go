@@ -230,7 +230,8 @@ func createApp(options ApplicationOptions) (string, error) {
 	options.token = respBind.Token
 
 	loadedScripts := make(map[string]bool)
-	scripts := make([]string, 0)
+	// scripts := make([]string, 0)
+	scripts := make([]Recipe, 0)
 	// Loop over app recipes, and go over parent recipes
 	jr, _ := json.Marshal(respAppInfo)
 	log.Printf("[INFO] app = %s", jr)
@@ -277,7 +278,7 @@ func createApp(options ApplicationOptions) (string, error) {
 			// Already loaded
 		} else {
 			loadedScripts[recipe.Name] = true
-			scripts = append(scripts, recipe.Script)
+			scripts = append(scripts, *recipe)
 		}
 		if recipe.ParentRecipe != "" {
 			parentRecipes, err := getParentRecipe(options, recipe.ParentRecipe)
@@ -290,24 +291,24 @@ func createApp(options ApplicationOptions) (string, error) {
 					// Already loaded
 				} else {
 					loadedScripts[parentRecipe.Name] = true
-					scripts = append(scripts, parentRecipe.Script)
+					scripts = append(scripts, parentRecipe)
 					scriptTxt += fmt.Sprintf("\n#*** Load recipe %s:%s **********\n", parentRecipe.Name, parentRecipe.ID.Hex())
 				}
 			}
 		}
 
 		for i := len(scripts) - 1; i >= 0; i-- {
-			scripts[i] = strings.Replace(scripts[i], "${GOT_ID}", options.application, -1)
-			scripts[i] = strings.Replace(scripts[i], "${GOT_URL}", options.deploymentAddress, -1)
-			scripts[i] = strings.Replace(scripts[i], "${GOT_TOKEN}", options.deploymentToken, -1)
-			scripts[i] = strings.Replace(scripts[i], "${GOT_DEP}", options.deployment, -1)
-			scripts[i] = strings.Replace(scripts[i], "${GOT_NAME}", gotName, -1)
+			scripts[i].Script = strings.Replace(scripts[i].Script, "${GOT_ID}", options.application, -1)
+			scripts[i].Script = strings.Replace(scripts[i].Script, "${GOT_URL}", options.deploymentAddress, -1)
+			scripts[i].Script = strings.Replace(scripts[i].Script, "${GOT_TOKEN}", options.deploymentToken, -1)
+			scripts[i].Script = strings.Replace(scripts[i].Script, "${GOT_DEP}", options.deployment, -1)
+			scripts[i].Script = strings.Replace(scripts[i].Script, "${GOT_NAME}", gotName, -1)
 
-			errRecipe := addRecipe(options, i, scripts[i])
+			errRecipe := addRecipe(options, scripts[i].ID.Hex(), scripts[i].Script)
 			if errRecipe != nil {
 				return "", errRecipe
 			}
-			recipeIndex := "_recipe" + fmt.Sprintf("%s_%d", options.application, i)
+			recipeIndex := "_recipe" + fmt.Sprintf("%s_%s", options.application, scripts[i].ID.Hex())
 			scriptTxt += "\n" + "/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN get " + recipeIndex + " > /opt/got/" + recipeIndex + ".sh\n"
 			scriptTxt += "dos2unix /opt/got/" + recipeIndex + ".sh\n"
 			scriptTxt += "chmod +x /opt/got/" + recipeIndex + ".sh\n"
@@ -316,7 +317,7 @@ func createApp(options ApplicationOptions) (string, error) {
 
 		scriptTxt += "\n#****************************\n"
 
-		scripts = make([]string, 0)
+		scripts = make([]Recipe, 0)
 
 	}
 
@@ -340,9 +341,9 @@ func createApp(options ApplicationOptions) (string, error) {
 	return cloudinit, nil
 }
 
-func addRecipe(options ApplicationOptions, index int, script string) error {
+func addRecipe(options ApplicationOptions, recipe string, script string) error {
 	remote := []string{options.deploymentAddress, "store", options.deployment}
-	recipeData := DeploymentData{Key: "_recipe" + fmt.Sprintf("%s_%d", options.application, index), Value: script}
+	recipeData := DeploymentData{Key: "_recipe" + fmt.Sprintf("%s_%s", options.application, recipe), Value: script}
 	byteData, _ := json.Marshal(recipeData)
 	req, _ := http.NewRequest("PUT", strings.Join(remote, "/"), bytes.NewBuffer(byteData))
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", options.deploymentToken))
@@ -351,12 +352,12 @@ func addRecipe(options ApplicationOptions, index int, script string) error {
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Printf("failed to contact server %s\n", options.url)
-		return fmt.Errorf("[ERROR] Failed to store recipe %d: %s", index, err)
+		return fmt.Errorf("[ERROR] Failed to store recipe %s: %s", recipe, err)
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
 		log.Printf("failed to create deployment %d\n", resp.StatusCode)
-		return fmt.Errorf("[ERROR] Failed to store recipe %d: %d", index, resp.StatusCode)
+		return fmt.Errorf("[ERROR] Failed to store recipe %s: %d", recipe, resp.StatusCode)
 	}
 	return nil
 }
