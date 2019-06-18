@@ -430,7 +430,7 @@ type Recipe struct {
 	Script       string             `json:"script"`
 	Public       bool               `json:"public"`
 	Namespace    string             `json:"namespace"`
-	BaseImage    string             `json:"base"`
+	BaseImages   []string             `json:"base"`
 	ParentRecipe string             `json:"parent"`
 	Timestamp    int64              `json:"ts"`
 	Previous     string             `json:"prev"`   // Previous recipe id, for versioning
