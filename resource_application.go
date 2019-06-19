@@ -21,7 +21,7 @@ export TOKEN="${GOT_TOKEN}"
 
 ON_ERROR () {
 	trap ERR
-	if [ -e /opt/got/got.log ]; then
+	if [ -e /opt/got/${GOT_ID}.log ]; then
 		/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put _log_app_${GOT_NAME}_${HOSTNAME} @/opt/got/${GOT_ID}.log
 	fi
 	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put status_app_${GOT_NAME}_${HOSTNAME} failed
@@ -64,10 +64,9 @@ chmod +x /opt/got/goterra-cli
 /opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put status_app_${GOT_NAME}_${HOSTNAME} start
 `
 const goterraTmpPost string = `
-echo "[TODO] send log with put log @/opt/got/got.log"
 echo "[INFO] setup is over"
 /opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put status_app_${GOT_NAME}_${HOSTNAME} over
-if [ -e /opt/got/got.log ]; then
+if [ -e /opt/got/${GOT_ID}.log ]; then
 	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put _log_app_${GOT_NAME}_${HOSTNAME} @/opt/got/${GOT_ID}.log
 fi
 
@@ -430,7 +429,7 @@ type Recipe struct {
 	Script       string             `json:"script"`
 	Public       bool               `json:"public"`
 	Namespace    string             `json:"namespace"`
-	BaseImages   []string             `json:"base"`
+	BaseImages   []string           `json:"base"`
 	ParentRecipe string             `json:"parent"`
 	Timestamp    int64              `json:"ts"`
 	Previous     string             `json:"prev"`   // Previous recipe id, for versioning
