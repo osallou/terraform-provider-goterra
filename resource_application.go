@@ -263,7 +263,7 @@ func createApp(options ApplicationOptions) (string, error) {
 					scriptTxt += fmt.Sprintf("export %s=%q\n", key, val)
 					if key == "ssh_pub_key" && val != "" {
 						quotedVal := strconv.Quote(val)
-						scriptTxt += fmt.Sprintf("echo %s >> ~/.ssh/authorized_keys", quotedVal)
+						scriptTxt += fmt.Sprintf("echo %s >> ~/.ssh/authorized_keys\n", quotedVal)
 					}
 				}
 			}
