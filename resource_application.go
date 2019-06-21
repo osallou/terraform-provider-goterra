@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
 	"strings"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -237,11 +239,36 @@ func createApp(options ApplicationOptions) (string, error) {
 
 	scriptTxt := goterraTmplPre + "\n"
 
-	for varName, varValue := range respAppInfo.App.Inputs {
-		if strings.HasPrefix(varName, "env_") {
-			exportName := strings.Replace(varName, "env_", "", 1)
-			scriptTxt += fmt.Sprintf("export %s=%q\n", exportName, varValue)
+	// ISSUE varValue is label not value given at runtime
+	// TODO Should match against a set of input map taken from vars, Inputs value is only a descriptive here
+	// Or get them via env,?
+	// get from run,  but run id is unknown (from os? added var?)
+	// get from an optional input var
+	// If needs var, template should have some goterra_push and recipe fetch it with goterra cli
+
+	/*
+		for varName, varValue := range respAppInfo.App.Inputs {
+			if strings.HasPrefix(varName, "env_") {
+				exportName := strings.Replace(varName, "env_", "", 1)
+				scriptTxt += fmt.Sprintf("export %s=%q\n", exportName, varValue)
+			}
 		}
+	*/
+	if _, err := os.Stat("goterra.env"); err == nil {
+		dat, err := ioutil.ReadFile("goterra.env")
+		if err == nil {
+			var inputs map[string]string
+			if errJSON := json.Unmarshal(dat, inputs); errJSON == nil {
+				for key, val := range inputs {
+					scriptTxt += fmt.Sprintf("export %s=%q\n", key, val)
+					if key == "ssh_pub_key" && val != "" {
+						quotedVal := strconv.Quote(val)
+						scriptTxt += fmt.Sprintf("echo %s >> ~/.ssh/authorized_keys", quotedVal)
+					}
+				}
+			}
+		}
+
 	}
 
 	gotName := respAppInfo.App.Name
