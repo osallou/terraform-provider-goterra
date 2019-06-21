@@ -258,7 +258,7 @@ func createApp(options ApplicationOptions) (string, error) {
 		dat, err := ioutil.ReadFile("goterra.env")
 		if err == nil {
 			var inputs map[string]string
-			if errJSON := json.Unmarshal(dat, inputs); errJSON == nil {
+			if errJSON := json.Unmarshal(dat, &inputs); errJSON == nil {
 				for key, val := range inputs {
 					scriptTxt += fmt.Sprintf("export %s=%q\n", key, val)
 					if key == "ssh_pub_key" && val != "" {
