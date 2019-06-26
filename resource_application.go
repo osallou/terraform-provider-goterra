@@ -94,8 +94,11 @@ func resourceApplication() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"recipe_tag": &schema.Schema{
-				Type:     schema.TypeString,
+			"recipe_tags": &schema.Schema{
+				Type: schema.TypeList,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
 				Optional: true,
 			},
 			"deployment": &schema.Schema{
@@ -132,7 +135,7 @@ func resourceApplicationCreate(d *schema.ResourceData, m interface{}) error {
 
 	options := ApplicationOptions{}
 	options.name = d.Get("name").(string)
-	options.recipeTag = d.Get("recipe_tag").(string)
+	options.recipeTags = d.Get("recipe_tags").([]string)
 	options.url = m.(ProviderConfig).Address
 	options.apikey = m.(ProviderConfig).APIKey
 	if address != "" {
@@ -278,14 +281,20 @@ func createApp(options ApplicationOptions) (string, error) {
 
 	for _, appRecipe := range respAppInfo.App.Recipes {
 		recipe, err := getRecipe(options, appRecipe)
-		if options.recipeTag != "" {
+		if options.recipeTags != nil && len(options.recipeTags) > 0 {
 			tagMatch := false
 			if len(recipe.Tags) == 0 {
+				// If no tag, consider it is a match
 				tagMatch = true
 			} else {
 				for _, tag := range recipe.Tags {
-					if tag == options.recipeTag {
-						tagMatch = true
+					for _, appTag := range options.recipeTags {
+						if tag == appTag {
+							tagMatch = true
+							break
+						}
+					}
+					if tagMatch {
 						break
 					}
 				}
@@ -491,5 +500,5 @@ type ApplicationOptions struct {
 	namespace         string
 	token             string
 	name              string
-	recipeTag         string
+	recipeTags        []string
 }
