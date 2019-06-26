@@ -135,7 +135,12 @@ func resourceApplicationCreate(d *schema.ResourceData, m interface{}) error {
 
 	options := ApplicationOptions{}
 	options.name = d.Get("name").(string)
-	options.recipeTags = d.Get("recipe_tags").([]string)
+	rawRecipeTags := d.Get("recipe_tags").([]interface{})
+	options.recipeTags = make([]string, len(rawRecipeTags))
+	for i, raw := range rawRecipeTags {
+		options.recipeTags[i] = raw.(string)
+	}
+
 	options.url = m.(ProviderConfig).Address
 	options.apikey = m.(ProviderConfig).APIKey
 	if address != "" {
@@ -287,6 +292,7 @@ func createApp(options ApplicationOptions) (string, error) {
 				// If no tag, consider it is a match
 				tagMatch = true
 			} else {
+				log.Printf("[ERROR] OSALLOU SEARCH FOR RECIPES")
 				for _, tag := range recipe.Tags {
 					for _, appTag := range options.recipeTags {
 						if tag == appTag {
