@@ -315,12 +315,6 @@ func createApp(options ApplicationOptions) (string, error) {
 		}
 		scriptTxt += fmt.Sprintf("\n#*** Apply recipe %s **********\n", recipe.Name)
 
-		if _, ok := loadedScripts[recipe.Name]; ok {
-			// Already loaded
-		} else {
-			loadedScripts[recipe.Name] = true
-			scripts = append(scripts, *recipe)
-		}
 		if recipe.ParentRecipe != "" {
 			parentRecipes, err := getParentRecipe(options, recipe.ParentRecipe)
 			if err != nil {
@@ -333,12 +327,21 @@ func createApp(options ApplicationOptions) (string, error) {
 				} else {
 					loadedScripts[parentRecipe.Name] = true
 					scripts = append(scripts, parentRecipe)
-					scriptTxt += fmt.Sprintf("\n#*** Load recipe %s:%s **********\n", parentRecipe.Name, parentRecipe.ID.Hex())
+					scriptTxt += fmt.Sprintf("\n#*** Load parent recipe %s:%s **********\n", parentRecipe.Name, parentRecipe.ID.Hex())
 				}
 			}
 		}
 
-		for i := len(scripts) - 1; i >= 0; i-- {
+		if _, ok := loadedScripts[recipe.Name]; ok {
+			// Already loaded
+		} else {
+			loadedScripts[recipe.Name] = true
+			scripts = append(scripts, *recipe)
+			scriptTxt += fmt.Sprintf("\n#*** Load recipe %s:%s **********\n", recipe.Name, recipe.ID.Hex())
+		}
+
+		// for i := len(scripts) - 1; i >= 0; i-- {
+		for i := 0; i < len(scripts); i++ {
 			scripts[i].Script = strings.Replace(scripts[i].Script, "${GOT_ID}", options.application, -1)
 			scripts[i].Script = strings.Replace(scripts[i].Script, "${GOT_URL}", options.deploymentAddress, -1)
 			scripts[i].Script = strings.Replace(scripts[i].Script, "${GOT_TOKEN}", options.deploymentToken, -1)
