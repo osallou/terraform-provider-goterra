@@ -58,7 +58,18 @@ get_latest_release() {
 }
 cliversion=` + "`get_latest_release`" + `
 
+send_start_ts() {
+	cur=` + "`date +%s`" + `
+	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put _ts_start_${GOT_NAME}_${HOSTNAME} $cur
+}
+
+send_end_ts() {
+	cur=` + "`date +%s`" + `
+	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put _ts_end_${GOT_NAME}_${HOSTNAME} $cur
+}
+
 echo "[INFO] initialization"
+send_start_ts
 mkdir -p /opt/got
 curl -L -o /opt/got/goterra-cli https://github.com/osallou/goterra-store/releases/download/$cliversion/goterra-cli.linux.amd64
 chmod +x /opt/got/goterra-cli
@@ -67,6 +78,7 @@ chmod +x /opt/got/goterra-cli
 `
 const goterraTmpPost string = `
 echo "[INFO] setup is over"
+send_end_ts
 /opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put status_app_${GOT_NAME}_${HOSTNAME} over
 if [ -e /opt/got/${GOT_ID}.log ]; then
 	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put _log_app_${GOT_NAME}_${HOSTNAME} @/opt/got/${GOT_ID}.log
@@ -486,6 +498,15 @@ type RespApplication struct {
 	App Application `json:"app"`
 }
 
+// Model defines a set of VM which can be used to generate some terraform templates for openstack, ...
+type Model struct {
+	Name             string `json:"name"`
+	Count            int64  `json:"count"`
+	PublicIP         string `json:"public_ip"`
+	EphemeralStorage string `json:"ephemeral_disk"`
+	SharedStorage    string `json:"shared_storage"`
+}
+
 // Application descripe an app to deploy
 type Application struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
@@ -494,8 +515,12 @@ type Application struct {
 	Public      bool               `json:"public"`
 	Recipes     []string           `json:"recipes"`
 	Namespace   string             `json:"namespace"`
-	Templates   map[string]string  `json:"templates"`
-	Inputs      map[string]string  `json:"inputs"` // expected inputs
+	Templates   map[string]string  `json:"templates"` // One template per endpoint type (openstack, ...)
+	Model       []Model            `json:"model"`     // Model describe expected VM, templates will be generated from model
+	Inputs      map[string]string  `json:"inputs"`    // expected inputs varname, label
+	Image       string             `json:"image"`
+	Timestamp   int64              `json:"ts"`
+	Previous    string
 }
 
 // ApplicationOptions to connect to goterra and get recipes for app
