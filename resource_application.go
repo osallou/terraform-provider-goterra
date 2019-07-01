@@ -69,10 +69,11 @@ send_end_ts() {
 }
 
 echo "[INFO] initialization"
-send_start_ts
+
 mkdir -p /opt/got
 curl -L -o /opt/got/goterra-cli https://github.com/osallou/goterra-store/releases/download/$cliversion/goterra-cli.linux.amd64
 chmod +x /opt/got/goterra-cli
+send_start_ts
 
 /opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put status_app_${GOT_NAME}_${HOSTNAME} start
 `
