@@ -50,7 +50,7 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:75ff23c02878c12d796ec3fa6fc0511907b1c67721e81b13517c28bab0628e51"
+  digest = "1:01de544f591bccbe57185f79a6cc3d3bb59ddfad195f97d09f4a3bc6b90a3e0d"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -90,8 +90,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "bdafd99f31a0103ec73bcabfc9498aef3252d515"
-  version = "v1.19.47"
+  revision = "e8609b5f90982d7e69f00c611dd4e8a6c05e2f98"
+  version = "v1.20.12"
 
 [[projects]]
   branch = "master"
@@ -155,12 +155,12 @@
   version = "v0.3.0"
 
 [[projects]]
-  digest = "1:f1f70abea1ab125d48396343b4c053f8fecfbdb943037bf3d29dc80c90fe60b3"
+  digest = "1:766102087520f9d54f2acc72bd6637045900ac735b4a419b128d216f0c5c4876"
   name = "github.com/googleapis/gax-go"
   packages = ["v2"]
   pruneopts = "UT"
-  revision = "beaecbbdd8af86aa3acf14180d53828ce69400b2"
-  version = "v2.0.4"
+  revision = "bd5b16380fd03dc758d11cef74ba2e3bc8b0e8c2"
+  version = "v2.0.5"
 
 [[projects]]
   digest = "1:0ade334594e69404d80d9d323445d2297ff8161637f9b2d347cc6973d2d6f05b"
@@ -206,15 +206,15 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:5e1aece859ec4195f3d16dd3b64a0f111e186b9e95d75141465595063e3a5254"
+  digest = "1:5d8ebc1cb15676990b1cb8b969b86de8549b21a3729bd2cf11754211e1919131"
   name = "github.com/hashicorp/go-plugin"
   packages = [
     ".",
     "internal/plugin",
   ]
   pruneopts = "UT"
-  revision = "52e1c4730856c1438ced7597c9b5c585a7bd06a2"
-  version = "v1.0.0"
+  revision = "9e3e1c37db188a1acb66561ee0ed4bf4d5e77554"
+  version = "v1.0.1"
 
 [[projects]]
   digest = "1:605c47454db9040e30b20dc1b29e3e9d42d6ee742545729cdef74afb1b898ad0"
@@ -268,7 +268,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:06a801963173cd7b30efd89599a2a005c802aef10a6f30f7cb98152c13ec5227"
+  digest = "1:51327c2d65b00991c1e5eeb8b6d7c872f0a02a86a8f889b58b0f1d82e24d3a73"
   name = "github.com/hashicorp/hcl2"
   packages = [
     "ext/dynblock",
@@ -282,7 +282,7 @@
     "hclwrite",
   ]
   pruneopts = "UT"
-  revision = "318e80eefe28c3aa01b434c61bcf4c83a0cc6b25"
+  revision = "0b64543c968c45c8227fcde1293ee2655262c45b"
 
 [[projects]]
   branch = "master"
@@ -298,7 +298,7 @@
   revision = "97b3a9cdfa9349086cfad7ea2fe3165bfe3cbf63"
 
 [[projects]]
-  digest = "1:f4633ab2ff5435ebf4f7affc4a6ee831901850a3c3eb5c876e99894f8f75b3ef"
+  digest = "1:7ff23d23a6efd144ac42c28897e5d3ca032a32b818dc520f77123644c77e617b"
   name = "github.com/hashicorp/terraform"
   packages = [
     "addrs",
@@ -340,8 +340,8 @@
     "version",
   ]
   pruneopts = "UT"
-  revision = "12c3170748efe30a36bb2e937c02c2f2a600e120"
-  version = "v0.12.1"
+  revision = "2e8cb7218d8454327c5c6d3ca439ed725544c3df"
+  version = "v0.12.3"
 
 [[projects]]
   branch = "master"
@@ -447,6 +447,14 @@
   version = "v1.0.0"
 
 [[projects]]
+  branch = "master"
+  digest = "1:fecc38bbe64b434df2cf62a83957af792b2a7b7329449ff096e34fcad77633d0"
+  name = "github.com/osallou/goterra-lib"
+  packages = ["lib/model"]
+  pruneopts = "UT"
+  revision = "4e154f9269296ca384c77ab07b3f803c57e1fd32"
+
+[[projects]]
   digest = "1:57e168c6dfcc02c1c53bdf1589afbef59694d819cac65bfd3a855de2256d4950"
   name = "github.com/posener/complete"
   packages = [
@@ -458,6 +466,14 @@
   pruneopts = "UT"
   revision = "3ef9b31a6a0613ae832e7ecf208374027c3b2343"
   version = "v1.2.1"
+
+[[projects]]
+  digest = "1:274f67cb6fed9588ea2521ecdac05a6d62a8c51c074c1fccc6a49a40ba80e925"
+  name = "github.com/satori/go.uuid"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "f58768cc1a7a7e77a3bd49e98cdd21419399b6a3"
+  version = "v1.2.0"
 
 [[projects]]
   digest = "1:bb495ec276ab82d3dd08504bbc0594a65de8c3b22c6f2aaa92d05b73fbf3a82e"
@@ -512,6 +528,14 @@
   version = "v1.0.0"
 
 [[projects]]
+  digest = "1:7922171eda409496bd43979d690c2ba5d58912d9bc5cafdc0509e7cd5a6f8314"
+  name = "github.com/zclconf/go-cty-yaml"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "fbabe99bb1c897a56ed70103a40aa94fc50a7104"
+  version = "v0.1.0"
+
+[[projects]]
   digest = "1:1cabe44fb226a08664539c7ff79f25940284d9e2116187a74c90472a51c257ca"
   name = "go.mongodb.org/mongo-driver"
   packages = ["bson/primitive"]
@@ -560,7 +584,7 @@
     "openpgp/s2k",
   ]
   pruneopts = "UT"
-  revision = "f99c8df09eb5bff426315721bfa5f16a99cad32c"
+  revision = "cc06ce4a13d484c0101a9e92913248488a75786d"
 
 [[projects]]
   branch = "master"
@@ -577,7 +601,7 @@
     "trace",
   ]
   pruneopts = "UT"
-  revision = "3f473d35a33aa6fdd203e306dc439b797820e3f1"
+  revision = "da137c7871d730100384dbcf36e6f8fa493aef5b"
 
 [[projects]]
   branch = "master"
@@ -595,11 +619,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:010311506e3917b54487c35a4277e2709678a40c1587d82492c40b78b6a0a01d"
+  digest = "1:730ba27cd66db3b98ec8f51a6f20d45ec277d490cca36b1f54e31d3fcaf4840e"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "93c9922d18aeb82498a065f07aec7ad7fa60dfb7"
+  revision = "04f50cda93cbb67f2afa353c52f342100e80e625"
 
 [[projects]]
   digest = "1:8d8faad6b12a3a4c819a3f9618cb6ee1fa1cfc33253abeeea8b55336721e3405"
@@ -627,7 +651,7 @@
   version = "v0.3.2"
 
 [[projects]]
-  digest = "1:06b06a112ad8f420557af56ad06bb8b16b77d11b0a2f11edf335095f7772e9b5"
+  digest = "1:a7e4acda410127f8e14d451bfb86bb843eec1a991c5e80f88926fe619296bed1"
   name = "google.golang.org/api"
   packages = [
     "gensupport",
@@ -642,8 +666,8 @@
     "transport/http/internal/propagation",
   ]
   pruneopts = "UT"
-  revision = "aac82e61c0c8fe133c297b4b59316b9f481e1f0a"
-  version = "v0.6.0"
+  revision = "02490b97dff7cfde1995bd77de808fd27053bc87"
+  version = "v0.7.0"
 
 [[projects]]
   digest = "1:aab5961ce178ac5006b1c2d52214a0d22a49589eb986d6769e1c93e95301f0d4"
@@ -679,7 +703,7 @@
     "googleapis/type/expr",
   ]
   pruneopts = "UT"
-  revision = "eb0b1bdb6ae60fcfc41b8d907b50dfb346112301"
+  revision = "eb59cef1c072c61ea4f7623910448d5e9c6a4455"
 
 [[projects]]
   digest = "1:7216432f8ed911d5f54bd9b59c7f5162fd7f5b46e5da250666b78897d776a7a8"
@@ -731,7 +755,7 @@
     "github.com/hashicorp/terraform/helper/schema",
     "github.com/hashicorp/terraform/plugin",
     "github.com/hashicorp/terraform/terraform",
-    "go.mongodb.org/mongo-driver/bson/primitive",
+    "github.com/osallou/goterra-lib/lib/model",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
