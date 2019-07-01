@@ -13,7 +13,7 @@ import (
 
 	"github.com/hashicorp/terraform/helper/schema"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	terraModel "github.com/osallou/goterra-lib/lib/model"
 )
 
 const goterraTmplPre string = `#!/bin/bash
@@ -252,7 +252,7 @@ func createApp(options ApplicationOptions) (string, error) {
 
 	loadedScripts := make(map[string]bool)
 	// scripts := make([]string, 0)
-	scripts := make([]Recipe, 0)
+	scripts := make([]terraModel.Recipe, 0)
 	// Loop over app recipes, and go over parent recipes
 	jr, _ := json.Marshal(respAppInfo)
 	log.Printf("[INFO] app = %s", jr)
@@ -373,7 +373,7 @@ func createApp(options ApplicationOptions) (string, error) {
 
 		scriptTxt += "\n#****************************\n"
 
-		scripts = make([]Recipe, 0)
+		scripts = make([]terraModel.Recipe, 0)
 
 	}
 
@@ -418,9 +418,9 @@ func addRecipe(options ApplicationOptions, recipe string, script string) error {
 	return nil
 }
 
-func getParentRecipe(options ApplicationOptions, recipeID string) (recipes []Recipe, err error) {
+func getParentRecipe(options ApplicationOptions, recipeID string) (recipes []terraModel.Recipe, err error) {
 	log.Printf("[INFO] load parent recipes of %s", recipeID)
-	recipes = make([]Recipe, 0)
+	recipes = make([]terraModel.Recipe, 0)
 	parentRecipe, err := getRecipe(options, recipeID)
 	if err != nil {
 		return recipes, fmt.Errorf("failed to get recipe %s", recipeID)
@@ -449,7 +449,7 @@ func getParentRecipe(options ApplicationOptions, recipeID string) (recipes []Rec
 	return recipes, nil
 }
 
-func getRecipe(options ApplicationOptions, recipeID string) (recipe *Recipe, err error) {
+func getRecipe(options ApplicationOptions, recipeID string) (recipe *terraModel.Recipe, err error) {
 	log.Printf("[INFO] load recipe %s", recipeID)
 	remote := []string{options.url, "deploy", "ns", options.namespace, "recipe", recipeID}
 	byteData := make([]byte, 0)
@@ -475,52 +475,11 @@ func getRecipe(options ApplicationOptions, recipeID string) (recipe *Recipe, err
 }
 
 type RespRecipe struct {
-	Recipe Recipe `json:"recipe"`
-}
-
-// Recipe describe a recipe for an app
-type Recipe struct {
-	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	Name         string             `json:"name"`
-	Description  string             `json:"description"`
-	Script       string             `json:"script"`
-	Public       bool               `json:"public"`
-	Namespace    string             `json:"namespace"`
-	BaseImages   []string           `json:"base"`
-	ParentRecipe string             `json:"parent"`
-	Timestamp    int64              `json:"ts"`
-	Previous     string             `json:"prev"`   // Previous recipe id, for versioning
-	Inputs       map[string]string  `json:"inputs"` // List of input variables needed when executing at app for this recipe, those variables should be sent as env_XX if XX is in requires: varname,label
-	Tags         []string           `json:"tags"`
+	Recipe terraModel.Recipe `json:"recipe"`
 }
 
 type RespApplication struct {
-	App Application `json:"app"`
-}
-
-// Model defines a set of VM which can be used to generate some terraform templates for openstack, ...
-type Model struct {
-	Name             string `json:"name"`
-	Count            int64  `json:"count"`
-	PublicIP         string `json:"public_ip"`
-	EphemeralStorage string `json:"ephemeral_disk"`
-	SharedStorage    string `json:"shared_storage"`
-}
-
-// Application descripe an app to deploy
-type Application struct {
-	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	Name        string             `json:"name"`
-	Description string             `json:"description"`
-	Public      bool               `json:"public"`
-	Recipes     []string           `json:"recipes"`
-	Namespace   string             `json:"namespace"`
-	Templates   map[string]string  `json:"templates"` // One template per endpoint type (openstack, ...)
-	Model       []Model            `json:"model"`     // Model describe expected VM, templates will be generated from model
-	Inputs      map[string]string  `json:"inputs"`    // expected inputs varname, label
-	Image       string             `json:"image"`
-	Timestamp   int64              `json:"ts"`
-	Previous    string
+	App terraModel.Application `json:"app"`
 }
 
 // ApplicationOptions to connect to goterra and get recipes for app
