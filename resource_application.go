@@ -60,12 +60,12 @@ cliversion=` + "`get_latest_release`" + `
 
 send_start_ts() {
 	cur=` + "`date +%s`" + `
-	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put _ts_start_${GOT_NAME}_${HOSTNAME} $cur
+	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put ts_start_${GOT_NAME}_${HOSTNAME} $cur
 }
 
 send_end_ts() {
 	cur=` + "`date +%s`" + `
-	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put _ts_end_${GOT_NAME}_${HOSTNAME} $cur
+	/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN put ts_end_${GOT_NAME}_${HOSTNAME} $cur
 }
 
 echo "[INFO] initialization"
@@ -114,6 +114,13 @@ func resourceApplication() *schema.Resource {
 				},
 				Optional: true,
 			},
+			"recipes": &schema.Schema{
+				Type: schema.TypeList,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Optional: true,
+			},
 			"deployment": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
@@ -152,6 +159,12 @@ func resourceApplicationCreate(d *schema.ResourceData, m interface{}) error {
 	options.recipeTags = make([]string, len(rawRecipeTags))
 	for i, raw := range rawRecipeTags {
 		options.recipeTags[i] = raw.(string)
+	}
+
+	rawRecipes := d.Get("recipes").([]interface{})
+	options.recipes = make([]string, len(rawRecipes))
+	for i, raw := range rawRecipes {
+		options.recipes[i] = raw.(string)
 	}
 
 	options.url = m.(ProviderConfig).Address
@@ -297,85 +310,63 @@ func createApp(options ApplicationOptions) (string, error) {
 		gotName = options.name
 	}
 
-	for _, appRecipe := range respAppInfo.App.Recipes {
-		recipe, err := getRecipe(options, appRecipe)
-		if options.recipeTags != nil && len(options.recipeTags) > 0 {
-			tagMatch := false
-			if len(recipe.Tags) == 0 {
-				// If no tag, consider it is a match
-				tagMatch = true
-			} else {
-				log.Printf("[ERROR] OSALLOU SEARCH FOR RECIPES")
-				for _, tag := range recipe.Tags {
-					for _, appTag := range options.recipeTags {
-						if tag == appTag {
-							tagMatch = true
-							break
-						}
-					}
-					if tagMatch {
-						break
-					}
-				}
-			}
-			if !tagMatch {
-				continue
-			}
-		}
-		if err != nil {
-			log.Printf("[ERROR] Failed to get recipe")
-			return "", fmt.Errorf("[ERROR] failed to get recipe")
-		}
-		scriptTxt += fmt.Sprintf("\n#*** Apply recipe %s **********\n", recipe.Name)
-
-		if recipe.ParentRecipe != "" {
-			parentRecipes, err := getParentRecipe(options, recipe.ParentRecipe)
+	if options.recipes != nil && len(options.recipes) > 0 {
+		for _, appRecipe := range options.recipes {
+			recipe, err := getRecipe(options, appRecipe)
 			if err != nil {
 				log.Printf("[ERROR] Failed to get recipe")
-				return "", err
+				return "", fmt.Errorf("[ERROR] failed to get recipe")
 			}
-			for _, parentRecipe := range parentRecipes {
-				if _, ok := loadedScripts[parentRecipe.Name]; ok {
-					// Already loaded
-				} else {
-					loadedScripts[parentRecipe.Name] = true
-					scripts = append(scripts, parentRecipe)
-					scriptTxt += fmt.Sprintf("\n#*** Load parent recipe %s:%s **********\n", parentRecipe.Name, parentRecipe.ID.Hex())
+			scriptTxt += fmt.Sprintf("\n#*** Apply recipe %s **********\n", recipe.Name)
+
+			if recipe.ParentRecipe != "" {
+				parentRecipes, err := getParentRecipe(options, recipe.ParentRecipe)
+				if err != nil {
+					log.Printf("[ERROR] Failed to get recipe")
+					return "", err
+				}
+				for _, parentRecipe := range parentRecipes {
+					if _, ok := loadedScripts[parentRecipe.Name]; ok {
+						// Already loaded
+					} else {
+						loadedScripts[parentRecipe.Name] = true
+						scripts = append(scripts, parentRecipe)
+						scriptTxt += fmt.Sprintf("\n#*** Load parent recipe %s:%s **********\n", parentRecipe.Name, parentRecipe.ID.Hex())
+					}
 				}
 			}
-		}
 
-		if _, ok := loadedScripts[recipe.Name]; ok {
-			// Already loaded
-		} else {
-			loadedScripts[recipe.Name] = true
-			scripts = append(scripts, *recipe)
-			scriptTxt += fmt.Sprintf("\n#*** Load recipe %s:%s **********\n", recipe.Name, recipe.ID.Hex())
-		}
-
-		// for i := len(scripts) - 1; i >= 0; i-- {
-		for i := 0; i < len(scripts); i++ {
-			scripts[i].Script = strings.Replace(scripts[i].Script, "${GOT_ID}", options.application, -1)
-			scripts[i].Script = strings.Replace(scripts[i].Script, "${GOT_URL}", options.deploymentAddress, -1)
-			scripts[i].Script = strings.Replace(scripts[i].Script, "${GOT_TOKEN}", options.deploymentToken, -1)
-			scripts[i].Script = strings.Replace(scripts[i].Script, "${GOT_DEP}", options.deployment, -1)
-			scripts[i].Script = strings.Replace(scripts[i].Script, "${GOT_NAME}", gotName, -1)
-
-			errRecipe := addRecipe(options, scripts[i].ID.Hex(), scripts[i].Script)
-			if errRecipe != nil {
-				return "", errRecipe
+			if _, ok := loadedScripts[recipe.Name]; ok {
+				// Already loaded
+			} else {
+				loadedScripts[recipe.Name] = true
+				scripts = append(scripts, *recipe)
+				scriptTxt += fmt.Sprintf("\n#*** Load recipe %s:%s **********\n", recipe.Name, recipe.ID.Hex())
 			}
-			recipeIndex := "_recipe" + fmt.Sprintf("%s_%s", options.application, scripts[i].ID.Hex())
-			scriptTxt += "\n" + "/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN get " + recipeIndex + " > /opt/got/" + recipeIndex + ".sh\n"
-			scriptTxt += "dos2unix /opt/got/" + recipeIndex + ".sh\n"
-			scriptTxt += "chmod +x /opt/got/" + recipeIndex + ".sh\n"
-			scriptTxt += "/opt/got/" + recipeIndex + ".sh &>> /opt/got/${GOT_ID}.log"
+
+			// for i := len(scripts) - 1; i >= 0; i-- {
+			for i := 0; i < len(scripts); i++ {
+				scripts[i].Script = strings.Replace(scripts[i].Script, "${GOT_ID}", options.application, -1)
+				scripts[i].Script = strings.Replace(scripts[i].Script, "${GOT_URL}", options.deploymentAddress, -1)
+				scripts[i].Script = strings.Replace(scripts[i].Script, "${GOT_TOKEN}", options.deploymentToken, -1)
+				scripts[i].Script = strings.Replace(scripts[i].Script, "${GOT_DEP}", options.deployment, -1)
+				scripts[i].Script = strings.Replace(scripts[i].Script, "${GOT_NAME}", gotName, -1)
+
+				errRecipe := addRecipe(options, scripts[i].ID.Hex(), scripts[i].Script)
+				if errRecipe != nil {
+					return "", errRecipe
+				}
+				recipeIndex := "_recipe" + fmt.Sprintf("%s_%s", options.application, scripts[i].ID.Hex())
+				scriptTxt += "\n" + "/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN get " + recipeIndex + " > /opt/got/" + recipeIndex + ".sh\n"
+				scriptTxt += "dos2unix /opt/got/" + recipeIndex + ".sh\n"
+				scriptTxt += "chmod +x /opt/got/" + recipeIndex + ".sh\n"
+				scriptTxt += "/opt/got/" + recipeIndex + ".sh &>> /opt/got/${GOT_ID}.log"
+			}
+
+			scriptTxt += "\n#****************************\n"
+
+			scripts = make([]terraModel.Recipe, 0)
 		}
-
-		scriptTxt += "\n#****************************\n"
-
-		scripts = make([]terraModel.Recipe, 0)
-
 	}
 
 	scriptTxt = scriptTxt + "\n" + goterraTmpPost
@@ -495,4 +486,5 @@ type ApplicationOptions struct {
 	token             string
 	name              string
 	recipeTags        []string
+	recipes           []string
 }
