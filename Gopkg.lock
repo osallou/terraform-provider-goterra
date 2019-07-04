@@ -2,7 +2,7 @@
 
 
 [[projects]]
-  digest = "1:f4f038d23c9943c7150feb47c6d44eae9eee531c4e745b27217a2ac9ae2d2794"
+  digest = "1:52e073d7bba8ead61f5696a98263b2594f8a0b8f115ec7a705b66a115eac2250"
   name = "cloud.google.com/go"
   packages = [
     "compute/metadata",
@@ -14,8 +14,8 @@
     "storage",
   ]
   pruneopts = "UT"
-  revision = "457ea5c15ccf3b87db582c450e80101989da35f7"
-  version = "v0.40.0"
+  revision = "cf81fad90a1a1de334c4fc27e23eb9a4224b627a"
+  version = "v0.41.0"
 
 [[projects]]
   digest = "1:90afd0cfdffcc3df7855160ee2954cbca286e23c4eb9cb3d075536c9e4e1b04f"
@@ -50,7 +50,7 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:01de544f591bccbe57185f79a6cc3d3bb59ddfad195f97d09f4a3bc6b90a3e0d"
+  digest = "1:5344074fc61cdd651d9c5466c6ade70dee6d17d976da8e2a2f5e3acc026a61da"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -90,8 +90,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "e8609b5f90982d7e69f00c611dd4e8a6c05e2f98"
-  version = "v1.20.12"
+  revision = "471204b4ff86c9c417adb58cec55079c06d16213"
+  version = "v1.20.15"
 
 [[projects]]
   branch = "master"
@@ -268,7 +268,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:51327c2d65b00991c1e5eeb8b6d7c872f0a02a86a8f889b58b0f1d82e24d3a73"
+  digest = "1:c5635d7d7b18db32c57b2b932bbd33b31bce56083d8d4d50ebc0cb7f611086e7"
   name = "github.com/hashicorp/hcl2"
   packages = [
     "ext/dynblock",
@@ -282,7 +282,7 @@
     "hclwrite",
   ]
   pruneopts = "UT"
-  revision = "0b64543c968c45c8227fcde1293ee2655262c45b"
+  revision = "5b39d9ff3a9a746a3cdfcda7c97c3bb070a960f9"
 
 [[projects]]
   branch = "master"
@@ -448,11 +448,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:fecc38bbe64b434df2cf62a83957af792b2a7b7329449ff096e34fcad77633d0"
+  digest = "1:aed6f7a9659b62ba6e3f2606d8e8a99aa29937451bb138273c322c7747e58ed3"
   name = "github.com/osallou/goterra-lib"
   packages = ["lib/model"]
   pruneopts = "UT"
-  revision = "4e154f9269296ca384c77ab07b3f803c57e1fd32"
+  revision = "2397d0d70a01008185df077c9c958dc57398153f"
 
 [[projects]]
   digest = "1:57e168c6dfcc02c1c53bdf1589afbef59694d819cac65bfd3a855de2256d4950"
@@ -584,7 +584,7 @@
     "openpgp/s2k",
   ]
   pruneopts = "UT"
-  revision = "cc06ce4a13d484c0101a9e92913248488a75786d"
+  revision = "4def268fd1a49955bfb3dda92fe3db4f924f2285"
 
 [[projects]]
   branch = "master"
@@ -693,7 +693,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:1d7e4e8b75502678019b764e524684c25aeeb855ef93f0d5b52fd66e834a5d17"
+  digest = "1:beacbe474eb0d6ce778f0dd42150a1b48f5648339c9a28149dcf3a218272cb99"
   name = "google.golang.org/genproto"
   packages = [
     "googleapis/api/annotations",
@@ -703,10 +703,10 @@
     "googleapis/type/expr",
   ]
   pruneopts = "UT"
-  revision = "eb59cef1c072c61ea4f7623910448d5e9c6a4455"
+  revision = "710ae3a149df3775bfc2e9efb7f4fb97b186b233"
 
 [[projects]]
-  digest = "1:7216432f8ed911d5f54bd9b59c7f5162fd7f5b46e5da250666b78897d776a7a8"
+  digest = "1:04c178286a005bab0c6b2770203d8ce846f79aae989e38c8290f43f3d5c45c25"
   name = "google.golang.org/grpc"
   packages = [
     ".",
@@ -740,13 +740,14 @@
     "resolver",
     "resolver/dns",
     "resolver/passthrough",
+    "serviceconfig",
     "stats",
     "status",
     "tap",
   ]
   pruneopts = "UT"
-  revision = "501c41df7f472c740d0674ff27122f3f48c80ce7"
-  version = "v1.21.1"
+  revision = "1d89a3c832915b2314551c1d2a506874d62e53f7"
+  version = "v1.22.0"
 
 [solve-meta]
   analyzer-name = "dep"

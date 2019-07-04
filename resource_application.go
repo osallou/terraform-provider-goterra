@@ -10,6 +10,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/terraform/helper/schema"
 
@@ -265,29 +266,13 @@ func createApp(options ApplicationOptions) (string, error) {
 	options.token = respBind.Token
 
 	loadedScripts := make(map[string]bool)
-	// scripts := make([]string, 0)
 	scripts := make([]terraModel.Recipe, 0)
-	// Loop over app recipes, and go over parent recipes
-	jr, _ := json.Marshal(respAppInfo)
-	log.Printf("[INFO] app = %s", jr)
+
+	// jr, _ := json.Marshal(respAppInfo)
+	// log.Printf("[INFO] app = %s", jr)
 
 	scriptTxt := goterraTmplPre + "\n"
 
-	// ISSUE varValue is label not value given at runtime
-	// TODO Should match against a set of input map taken from vars, Inputs value is only a descriptive here
-	// Or get them via env,?
-	// get from run,  but run id is unknown (from os? added var?)
-	// get from an optional input var
-	// If needs var, template should have some goterra_push and recipe fetch it with goterra cli
-
-	/*
-		for varName, varValue := range respAppInfo.App.Inputs {
-			if strings.HasPrefix(varName, "env_") {
-				exportName := strings.Replace(varName, "env_", "", 1)
-				scriptTxt += fmt.Sprintf("export %s=%q\n", exportName, varValue)
-			}
-		}
-	*/
 	if _, err := os.Stat("goterra.env"); err == nil {
 		dat, err := ioutil.ReadFile("goterra.env")
 		if err == nil {
@@ -305,7 +290,7 @@ func createApp(options ApplicationOptions) (string, error) {
 
 	}
 
-	gotName := respAppInfo.App.Name
+	gotName := fmt.Sprintf("%s-%d", respAppInfo.App.Name, time.Now().Unix())
 	if options.name != "" {
 		gotName = options.name
 	}
