@@ -342,10 +342,16 @@ func createApp(options ApplicationOptions) (string, error) {
 					return "", errRecipe
 				}
 				recipeIndex := "_recipe" + fmt.Sprintf("%s_%s", options.application, scripts[i].ID.Hex())
-				scriptTxt += "\n" + "/opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN get " + recipeIndex + " > /opt/got/" + recipeIndex + ".sh\n"
-				scriptTxt += "dos2unix /opt/got/" + recipeIndex + ".sh\n"
-				scriptTxt += "chmod +x /opt/got/" + recipeIndex + ".sh\n"
-				scriptTxt += "/opt/got/" + recipeIndex + ".sh &>> /opt/got/${GOT_ID}.log"
+				scriptTxt += "\n"
+				scriptTxt += fmt.Sprintf("if [ -f %s.done ]; then\n", recipeIndex)
+				scriptTxt += "    echo \"recipe already executed, skipping\"\n"
+				scriptTxt += "else\n"
+				scriptTxt += fmt.Sprintf("    /opt/got/goterra-cli --deployment ${GOT_DEP} --url ${GOT_URL} --token $TOKEN get %s > /opt/got/%s.sh\n", recipeIndex, recipeIndex)
+				scriptTxt += fmt.Sprintf("    dos2unix /opt/got/%s.sh\n", recipeIndex)
+				scriptTxt += fmt.Sprintf("    chmod +x /opt/got/%s.sh\n", recipeIndex)
+				scriptTxt += fmt.Sprintf("    /opt/got/%s.sh &>> /opt/got/${GOT_ID}.log\n", recipeIndex)
+				scriptTxt += fmt.Sprintf("    touch %s.done\n", recipeIndex)
+				scriptTxt += "fi\n"
 			}
 
 			scriptTxt += "\n#****************************\n"

@@ -452,7 +452,7 @@
   name = "github.com/osallou/goterra-lib"
   packages = ["lib/model"]
   pruneopts = "UT"
-  revision = "2397d0d70a01008185df077c9c958dc57398153f"
+  revision = "03e662acdc4165306661c74f215ea9dff07d6a57"
 
 [[projects]]
   digest = "1:57e168c6dfcc02c1c53bdf1589afbef59694d819cac65bfd3a855de2256d4950"
