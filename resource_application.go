@@ -283,6 +283,16 @@ func createApp(options ApplicationOptions) (string, error) {
 					if key == "ssh_pub_key" && val != "" {
 						quotedVal := strconv.Quote(val)
 						scriptTxt += fmt.Sprintf("echo %s >> ~/.ssh/authorized_keys\n", quotedVal)
+						// debian uses *debian* user, ubuntu the *ubuntu* user and centos *centos* user via their cloudinit setup
+						scriptTxt += "if [ -e /home/debian ];then\n"
+						scriptTxt += fmt.Sprintf("echo %s >> ~debian/.ssh/authorized_keys\n", quotedVal)
+						scriptTxt += "fi\n"
+						scriptTxt += "if [ -e /home/ubuntu ];then\n"
+						scriptTxt += fmt.Sprintf("echo %s >> ~ubuntu/.ssh/authorized_keys\n", quotedVal)
+						scriptTxt += "fi\n"
+						scriptTxt += "if [ -e /home/centos ];then\n"
+						scriptTxt += fmt.Sprintf("echo %s >> ~centos/.ssh/authorized_keys\n", quotedVal)
+						scriptTxt += "fi\n"
 					}
 				}
 			}
