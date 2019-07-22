@@ -2,7 +2,7 @@
 
 
 [[projects]]
-  digest = "1:52e073d7bba8ead61f5696a98263b2594f8a0b8f115ec7a705b66a115eac2250"
+  digest = "1:10e0b4b02a22900e2b4551dff1bc21033e4ed19ee66f6b18a34cfb4c87675f96"
   name = "cloud.google.com/go"
   packages = [
     "compute/metadata",
@@ -14,8 +14,8 @@
     "storage",
   ]
   pruneopts = "UT"
-  revision = "cf81fad90a1a1de334c4fc27e23eb9a4224b627a"
-  version = "v0.41.0"
+  revision = "cdaaf98f9226c39dc162b8e55083b2fbc67b4674"
+  version = "v0.43.0"
 
 [[projects]]
   digest = "1:90afd0cfdffcc3df7855160ee2954cbca286e23c4eb9cb3d075536c9e4e1b04f"
@@ -50,7 +50,7 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:5b01068a40a49b04fa4ed3098156ce0bbbdb5e76dbeade12fbb8882f7ebb9704"
+  digest = "1:88fc81f9097e5180b532372a19ce4e82eaac813164450ff58c8283e377a1fc63"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -88,10 +88,11 @@
     "private/protocol/xml/xmlutil",
     "service/s3",
     "service/sts",
+    "service/sts/stsiface",
   ]
   pruneopts = "UT"
-  revision = "5995f581282b82398d39fa11a1f059fd6a3ee737"
-  version = "v1.20.18"
+  revision = "8ae9ae0c8959def54f4a180ed76812ccc5f888db"
+  version = "v1.21.1"
 
 [[projects]]
   branch = "master"
@@ -268,7 +269,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:c5635d7d7b18db32c57b2b932bbd33b31bce56083d8d4d50ebc0cb7f611086e7"
+  digest = "1:28313f3eb8ab31602cb3fdf8c11703e7684db6c25cff4c0c27fdd8e46371da60"
   name = "github.com/hashicorp/hcl2"
   packages = [
     "ext/dynblock",
@@ -282,7 +283,7 @@
     "hclwrite",
   ]
   pruneopts = "UT"
-  revision = "5b39d9ff3a9a746a3cdfcda7c97c3bb070a960f9"
+  revision = "618463aa79585804de2d5bb43032a43ab008cba3"
 
 [[projects]]
   branch = "master"
@@ -298,7 +299,7 @@
   revision = "97b3a9cdfa9349086cfad7ea2fe3165bfe3cbf63"
 
 [[projects]]
-  digest = "1:7ff23d23a6efd144ac42c28897e5d3ca032a32b818dc520f77123644c77e617b"
+  digest = "1:489ddca47fc47dee83897441dd208b0dfbbc964ff628f51a86825cf74d5ab620"
   name = "github.com/hashicorp/terraform"
   packages = [
     "addrs",
@@ -340,8 +341,8 @@
     "version",
   ]
   pruneopts = "UT"
-  revision = "2e8cb7218d8454327c5c6d3ca439ed725544c3df"
-  version = "v0.12.3"
+  revision = "0facd03d3a035268be7bd992cf8d088325f9d761"
+  version = "v0.12.5"
 
 [[projects]]
   branch = "master"
@@ -448,11 +449,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:76e798c3ef6f18f4a453574c84b3a011bb2a8d03c80d1d30588c473f3f8d08b9"
+  digest = "1:1989b9e43d2fff2f9450e36b0776b35778f2230195bafbc9a3b9d03f3a1cf312"
   name = "github.com/osallou/goterra-lib"
   packages = ["lib/model"]
   pruneopts = "UT"
-  revision = "d4e21588666f5a4b0f574364eb7b10ca4b449070"
+  revision = "9db94146b87f151f6f76e5033229aebd9981d658"
 
 [[projects]]
   digest = "1:57e168c6dfcc02c1c53bdf1589afbef59694d819cac65bfd3a855de2256d4950"
@@ -619,11 +620,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:5b3f90037a9027c43bdcae488c39d41aadecb9d85e645bb62b773a0a6f6e86b8"
+  digest = "1:5632b0c4d972da51b5914f09fc5c1a8535e9d8d5d937e95ef83c423a0dd67f13"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "6ec70d6a5542cba804c6d16ebe8392601a0b7b60"
+  revision = "fae7ac547cb717d141c433a2a173315e216b64c4"
 
 [[projects]]
   digest = "1:8d8faad6b12a3a4c819a3f9618cb6ee1fa1cfc33253abeeea8b55336721e3405"
@@ -703,7 +704,7 @@
     "googleapis/type/expr",
   ]
   pruneopts = "UT"
-  revision = "3bdd9d9f5532d75d09efb230bd767d265245cfe5"
+  revision = "c506a9f9061087022822e8da603a52fc387115a8"
 
 [[projects]]
   digest = "1:04c178286a005bab0c6b2770203d8ce846f79aae989e38c8290f43f3d5c45c25"
